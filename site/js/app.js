@@ -223,7 +223,7 @@ function summaryText(plan) {
     if (plan.chunks.size === 0) {
         return 'Nothing to delete: no saved chunks fall inside that selection.';
     }
-    return planParts(plan, byId('opt-trash').checked);
+    return planParts(plan, !byId('opt-forever').checked);
 }
 
 function renderTrash() {
@@ -241,10 +241,10 @@ function renderTrash() {
 
 function refresh() {
     renderTrash();
-    if (byId('opt-trash').checked) {
-        byId('btn-delete').textContent = 'Move files to trash';
-    } else {
+    if (byId('opt-forever').checked) {
         byId('btn-delete').textContent = 'Delete files';
+    } else {
+        byId('btn-delete').textContent = 'Move files to trash';
     }
     if (state.save.chunks.size === 0) {
         byId('summary').textContent = 'This save has no chunk files left.';
@@ -393,7 +393,7 @@ function resultText(result) {
 
 async function runDelete() {
     const plan = state.plan;
-    const useTrash = byId('opt-trash').checked;
+    const useTrash = !byId('opt-forever').checked;
     if (!plan || plan.chunks.size === 0 || !(await confirmDelete(plan, useTrash))) {
         return;
     }
