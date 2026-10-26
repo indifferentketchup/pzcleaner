@@ -26,7 +26,10 @@ Stop the game server before deleting.
 Builds are on the [releases page](https://github.com/indifferentketchup/pzcleaner/releases):
 `pzcleaner-windows-amd64.exe`, `pzcleaner-x86_64.AppImage` for Linux (make it
 executable, then run it) and `pzcleaner-macos.zip` (unsigned: right-click the
-app and choose Open the first time). Pushing a `v*` tag builds them with
+app and choose Open the first time). `SHA256SUMS.txt` lists each file's
+checksum; check a download with `sha256sum -c SHA256SUMS.txt --ignore-missing`
+on Linux, `shasum -a 256 -c SHA256SUMS.txt --ignore-missing` on macOS, or
+`Get-FileHash pzcleaner-windows-amd64.exe` in PowerShell. Pushing a `v*` tag builds them with
 GitHub Actions (`.github/workflows/release.yml`).
 
 ## Run
