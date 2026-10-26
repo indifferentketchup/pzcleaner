@@ -21,6 +21,14 @@ batch back" and "Empty the trash" work on that folder.
 
 Stop the game server before deleting.
 
+## Download
+
+Builds are on the [releases page](https://github.com/indifferentketchup/pzcleaner/releases):
+`pzcleaner-windows-amd64.exe`, `pzcleaner-x86_64.AppImage` for Linux (make it
+executable, then run it) and `pzcleaner-macos.zip` (unsigned: right-click the
+app and choose Open the first time). Pushing a `v*` tag builds them with
+GitHub Actions (`.github/workflows/release.yml`).
+
 ## Run
 
 - Linux: needs WebKitGTK 4.1. On Arch and CachyOS: `sudo pacman -S webkit2gtk-4.1`.

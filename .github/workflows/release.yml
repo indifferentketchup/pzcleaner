@@ -1,0 +1,84 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Install WebKitGTK
+        run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
+      - name: Build
+        run: CGO_ENABLED=1 go build -tags desktop,production,webkit2_41 -trimpath -ldflags="-s -w" -o pzcleaner .
+      - name: Package AppImage
+        run: |
+          mkdir -p AppDir/usr/bin
+          cp pzcleaner AppDir/usr/bin/pzcleaner
+          cp site/brand/favicon-192.png AppDir/pzcleaner.png
+          printf '#!/bin/sh\nexec "$(dirname "$(readlink -f "$0")")/usr/bin/pzcleaner" "$@"\n' > AppDir/AppRun
+          chmod +x AppDir/AppRun
+          printf '[Desktop Entry]\nType=Application\nName=pzcleaner\nComment=Reset parts of a Project Zomboid map\nExec=pzcleaner\nIcon=pzcleaner\nCategories=Game;Utility;\n' > AppDir/pzcleaner.desktop
+          curl -sSfL -o appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x appimagetool
+          APPIMAGE_EXTRACT_AND_RUN=1 ARCH=x86_64 ./appimagetool AppDir pzcleaner-x86_64.AppImage
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: pzcleaner-x86_64.AppImage
+
+  windows:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Build
+        run: GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -tags desktop,production -trimpath -ldflags="-s -w -H windowsgui" -o pzcleaner-windows-amd64.exe .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: pzcleaner-windows-amd64.exe
+
+  macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Build
+        run: |
+          CGO_ENABLED=1 GOARCH=arm64 go build -tags desktop,production -trimpath -ldflags="-s -w" -o pzcleaner-arm64 .
+          CGO_ENABLED=1 GOARCH=amd64 go build -tags desktop,production -trimpath -ldflags="-s -w" -o pzcleaner-amd64 .
+          mkdir -p pzcleaner.app/Contents/MacOS
+          lipo -create -output pzcleaner.app/Contents/MacOS/pzcleaner pzcleaner-arm64 pzcleaner-amd64
+          printf '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n<plist version="1.0"><dict><key>CFBundleName</key><string>pzcleaner</string><key>CFBundleExecutable</key><string>pzcleaner</string><key>CFBundleIdentifier</key><string>com.indifferentketchup.pzcleaner</string><key>CFBundlePackageType</key><string>APPL</string><key>CFBundleShortVersionString</key><string>%s</string><key>NSHighResolutionCapable</key><true/></dict></plist>\n' "${GITHUB_REF_NAME#v}" > pzcleaner.app/Contents/Info.plist
+          ditto -c -k --keepParent pzcleaner.app pzcleaner-macos.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: pzcleaner-macos.zip
+
+  release:
+    needs: [linux, windows, macos]
+    if: always() && needs.linux.result == 'success' && needs.windows.result == 'success'
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
