@@ -52,6 +52,8 @@ jobs:
 
   macos:
     runs-on: macos-14
+    env:
+      MACOSX_DEPLOYMENT_TARGET: "11.0"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -60,7 +62,7 @@ jobs:
       - name: Build
         run: |
           CGO_ENABLED=1 GOARCH=arm64 go build -tags desktop,production -trimpath -ldflags="-s -w" -o pzcleaner-arm64 .
-          CGO_ENABLED=1 GOARCH=amd64 go build -tags desktop,production -trimpath -ldflags="-s -w" -o pzcleaner-amd64 .
+          CGO_ENABLED=1 GOARCH=amd64 CC="clang -arch x86_64" CGO_CFLAGS="-arch x86_64" CGO_LDFLAGS="-arch x86_64" go build -tags desktop,production -trimpath -ldflags="-s -w" -o pzcleaner-amd64 .
           mkdir -p pzcleaner.app/Contents/MacOS
           lipo -create -output pzcleaner.app/Contents/MacOS/pzcleaner pzcleaner-arm64 pzcleaner-amd64
           printf '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n<plist version="1.0"><dict><key>CFBundleName</key><string>pzcleaner</string><key>CFBundleExecutable</key><string>pzcleaner</string><key>CFBundleIdentifier</key><string>com.indifferentketchup.pzcleaner</string><key>CFBundlePackageType</key><string>APPL</string><key>CFBundleShortVersionString</key><string>%s</string><key>NSHighResolutionCapable</key><true/></dict></plist>\n' "${GITHUB_REF_NAME#v}" > pzcleaner.app/Contents/Info.plist
