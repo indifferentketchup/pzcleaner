@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pzcleaner: reset part of a Project Zomboid B42 map</title>
+<meta name="description" content="Pick areas of a Project Zomboid save on a map and delete their chunk files so they regenerate. For Build 42 saves. Runs in your browser, nothing is uploaded.">
+<link rel="canonical" href="https://pzcleaner.indifferentketchup.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="gametools">
+<meta property="og:title" content="pzcleaner: reset part of a Project Zomboid B42 map">
+<meta property="og:description" content="Pick areas of a Project Zomboid Build 42 save on a map and delete their chunk files so they regenerate.">
+<meta property="og:url" content="https://pzcleaner.indifferentketchup.com/">
+<link rel="icon" type="image/png" sizes="32x32" href="brand/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="brand/favicon-192.png">
+<link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens/tokens.css">
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/site.css">
+<script src="desktop.js"></script>
+<script type="module" src="js/app.js"></script>
+</head>
+<body>
+<div class="shell">
+
+<header>
+  <nav class="topbar" aria-label="Global">
+    <a href="https://indifferentbroccoli.com" class="topbar-brand">
+      <img src="brand/broccoli-mark.png" alt="" width="48" height="48">
+      <span class="topbar-title">indifferent<br>broccoli</span>
+    </a>
+    <button type="button" id="menu-open" class="topbar-menu-button" aria-label="Open menu">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>
+    </button>
+    <div class="topbar-links">
+      <a href="https://indifferentbroccoli.com/gameservers">games</a>
+      <a href="https://indifferentbroccoli.com/servers">top servers</a>
+      <a href="https://indifferentbroccoli.com/about-us">about us</a>
+      <a href="https://indifferentbroccoli.com/contact-us">contact</a>
+      <a href="https://indifferentbroccoli.com/affiliates">affiliates</a>
+      <a href="https://wiki.indifferentbroccoli.com/" target="_blank" rel="noopener noreferrer">wiki</a>
+      <a href="https://shop.indifferentbroccoli.com/">merch</a>
+      <a href="https://boss.indifferentbroccoli.com/" target="_blank" rel="noopener noreferrer">open source</a>
+    </div>
+    <div class="topbar-actions">
+      <a href="https://indifferentbroccoli.com/gameservers" class="topbar-button topbar-button-primary">start new server +</a>
+      <a href="https://dashboard.indifferentbroccoli.com/login" class="topbar-button">log in</a>
+    </div>
+  </nav>
+  <div id="mobile-menu" class="mobile-menu" hidden>
+    <div id="menu-overlay" class="mobile-menu-overlay"></div>
+    <div class="mobile-menu-panel">
+      <a href="https://indifferentbroccoli.com" class="topbar-brand">
+        <img src="brand/broccoli-mark.png" alt="" width="48" height="48">
+        <span class="topbar-title">indifferent<br>broccoli</span>
+      </a>
+      <div class="mobile-menu-links">
+        <a href="https://indifferentbroccoli.com/gameservers">games</a>
+        <a href="https://indifferentbroccoli.com/servers">top servers</a>
+        <a href="https://indifferentbroccoli.com/about-us">about us</a>
+        <a href="https://indifferentbroccoli.com/contact-us">contact</a>
+        <a href="https://indifferentbroccoli.com/affiliates">affiliates</a>
+        <a href="https://wiki.indifferentbroccoli.com/" target="_blank" rel="noopener noreferrer">wiki</a>
+        <a href="https://shop.indifferentbroccoli.com/">merch</a>
+        <a href="https://boss.indifferentbroccoli.com/" target="_blank" rel="noopener noreferrer">open source</a>
+      </div>
+      <div class="mobile-menu-actions">
+        <a href="https://indifferentbroccoli.com/gameservers" class="button-primary">start new server +</a>
+        <a href="https://dashboard.indifferentbroccoli.com/login" class="button-primary-outline">log in</a>
+      </div>
+    </div>
+    <button type="button" id="menu-close" class="mobile-menu-close" aria-label="Close menu">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="site-header">
+    <div class="app-bar site-header-inner">
+      <a href="/" class="page-title-link">
+        <h1 class="page-title">pzcleaner:</h1>
+        <span class="page-tagline">indifferent broccoli chunk cleaner tool for project zomboid</span>
+      </a>
+      <span class="badge badge-info">B42</span>
+    </div>
+  </div>
+</header>
+
+<main class="app-bar">
+<div class="host-rail-layout">
+<div class="stack">
+
+  <section>
+    <h2 class="h1">Reset part of a Project Zomboid map</h2>
+    <p class="prose lede">For Build 42 saves. Every chunk a player has walked through is saved as its own file. Delete the file and the game builds that chunk fresh the next time someone gets close: loot back, zombies back, player damage gone. This page shows which chunks your save has, lets you box the ones to reset, and deletes those files for you.</p>
+  </section>
+
+  <section class="panel" aria-labelledby="open-h">
+    <h2 class="h2" id="open-h">1. Open your save folder</h2>
+    <p>Stop the server first, and keep a copy of the save. Deleted chunk files do not go to the recycle bin.</p>
+    <div class="open-actions">
+      <button type="button" id="btn-open" class="button-primary">Choose save folder</button>
+      <span id="scan-status" class="status-pill" role="status" hidden></span>
+    </div>
+    <p class="hint">Log in with your server's SFTP details, or pick a save folder on this computer. It's the folder that holds <code>map_meta.bin</code>.</p>
+    <p id="unsupported" class="status-error" role="alert" hidden>This browser can't open a folder for editing. Use Chrome, Edge or another Chromium browser on a desktop.</p>
+    <p id="open-error" class="status-error" role="alert" hidden></p>
+    <noscript>
+      <p class="status-error">This page needs JavaScript. A script in your browser does the reading and deleting, there's no server behind it to do it instead.</p>
+    </noscript>
+  </section>
+
+  <section class="panel" id="workspace" aria-labelledby="pick-h" hidden>
+    <h2 class="h2" id="pick-h">2. Box the areas to reset</h2>
+    <dl id="facts" class="facts"></dl>
+
+    <div class="map-toolbar">
+      <div class="cluster" role="group" aria-label="Map tool">
+        <button type="button" id="tool-select" class="btn btn-secondary small" aria-pressed="true">Draw delete box</button>
+        <button type="button" id="tool-keep" class="btn btn-ghost small" aria-pressed="false">Draw keep box</button>
+        <button type="button" id="tool-pan" class="btn btn-ghost small" aria-pressed="false">Pan</button>
+      </div>
+      <div class="cluster" role="group" aria-label="Zoom">
+        <button type="button" id="zoom-out" class="btn btn-ghost small" aria-label="Zoom out">&minus;</button>
+        <button type="button" id="zoom-in" class="btn btn-ghost small" aria-label="Zoom in">+</button>
+        <button type="button" id="zoom-fit" class="btn btn-ghost small">Fit</button>
+      </div>
+    </div>
+
+    <canvas id="map" class="map" data-tool="select" aria-label="Map of the save's chunk files. Use the coordinate fields below to add a box without a mouse."></canvas>
+
+    <div class="map-foot">
+      <ul class="legend">
+        <li><span class="swatch swatch-kept"></span>saved chunk</li>
+        <li><span class="swatch swatch-doomed"></span>will be deleted</li>
+        <li><span class="swatch swatch-guard"></span>safehouse</li>
+        <li><span class="swatch swatch-keep"></span>keep box</li>
+        <li><span class="swatch swatch-player"></span>player</li>
+      </ul>
+      <span id="hover" class="mono-label" aria-hidden="true"></span>
+    </div>
+    <p class="hint">Drag to draw a box. Scroll to zoom. Hold Shift and drag, or right-drag, to pan. "Box the whole map" covers the whole world, modded areas included. Only saved chunks are deleted, and they turn red.</p>
+
+    <form id="box-form" class="box-form">
+      <span class="mono-label">add a delete box by in-game coordinates</span>
+      <div class="box-fields">
+        <label>from x <input class="field small" id="box-x0" type="number" step="1" required></label>
+        <label>from y <input class="field small" id="box-y0" type="number" step="1" required></label>
+        <label>to x <input class="field small" id="box-x1" type="number" step="1" required></label>
+        <label>to y <input class="field small" id="box-y1" type="number" step="1" required></label>
+        <button type="submit" class="small-button-primary">Add box</button>
+        <button type="button" id="btn-everything" class="btn btn-secondary small">Box the whole map</button>
+      </div>
+    </form>
+
+    <ul id="box-list" class="box-list" aria-label="Delete boxes"></ul>
+    <ul id="keep-list" class="box-list" aria-label="Keep boxes"></ul>
+
+    <div class="options">
+      <span class="mono-label">never delete</span>
+      <label class="ctl--check"><input type="checkbox" class="ctl-check" id="opt-safehouses" checked> Claimed safehouses</label>
+      <label class="option-indent">chunks of padding around each safehouse <input class="field small" id="opt-padding" type="number" min="0" max="50" step="1" value="2"></label>
+      <label class="ctl--check"><input type="checkbox" class="ctl-check" id="opt-players" checked> Where living players last stood</label>
+      <label class="option-indent">chunks of padding around each player <input class="field small" id="opt-player-padding" type="number" min="0" max="50" step="1" value="3"></label>
+      <p class="hint">Keep boxes are always protected, and are remembered on this computer for a save folder with the same name.</p>
+
+      <span class="mono-label">selection</span>
+      <label class="ctl--check"><input type="checkbox" class="ctl-check" id="opt-invert"> Keep what's inside the delete boxes and delete everything else</label>
+
+      <span class="mono-label">in cells left with no chunk files, also delete</span>
+      <label class="ctl--check"><input type="checkbox" class="ctl-check" data-cell-kind="zpop" checked> Zombie population <code>zpop</code></label>
+      <label class="ctl--check"><input type="checkbox" class="ctl-check" data-cell-kind="apop" checked> Animal population <code>apop</code></label>
+      <label class="ctl--check"><input type="checkbox" class="ctl-check" data-cell-kind="chunkdata" checked> Chunk data <code>chunkdata</code></label>
+
+      <span class="mono-label">vehicles</span>
+      <label class="ctl--check"><input type="checkbox" class="ctl-check" id="opt-vehicles"> Remove vehicles parked in the deleted chunks</label>
+      <p class="hint">The game only spawns fresh vehicles in a chunk that has none on record, so leave this off and the old ones stay put, including players' cars. Ticking it edits <code>vehicles.db</code> and keeps a copy of the original.</p>
+
+      <span class="mono-label">undo</span>
+      <label class="ctl--check"><input type="checkbox" class="ctl-check" id="opt-trash" checked> Move files to a trash folder instead of deleting them</label>
+      <p class="hint">The trash is <code>pzcleaner-backup</code> in the Zomboid folder, beside <code>Saves</code>. Slower on big selections, and it takes up the same disk space until you empty it.</p>
+    </div>
+  </section>
+
+  <section class="panel" id="commit" aria-labelledby="delete-h" hidden>
+    <h2 class="h2" id="delete-h">3. Delete</h2>
+    <p id="summary" aria-live="polite"></p>
+    <div class="open-actions">
+      <button type="button" id="btn-delete" class="button-primary button-danger" disabled>Delete files</button>
+      <span id="delete-status" class="status-pill" role="status" hidden></span>
+    </div>
+    <p id="delete-error" class="status-error" role="alert" hidden></p>
+
+    <div id="trash" class="trash" hidden>
+      <span class="mono-label">trash</span>
+      <p id="trash-text"></p>
+      <div class="open-actions">
+        <button type="button" id="btn-restore" class="small-button-primary">Put the latest batch back</button>
+        <button type="button" id="btn-empty" class="small-button-primary button-danger">Empty the trash for good</button>
+        <span id="trash-status" class="status-pill" role="status" hidden></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="where-h">
+    <h2 class="h2" id="where-h">If you can't find the save folder</h2>
+    <p>The folder is named after the save, or after the server for multiplayer. It's the one with <code>map_meta.bin</code> and a <code>map</code> folder in it.</p>
+    <dl class="where-list">
+      <dt>Rented or dedicated server</dt>
+      <dd>Open a save and log in with the SFTP details from your host's panel. The save is <code>Zomboid/Saves/Multiplayer/&lt;server name&gt;</code>, and on some hosts the Zomboid folder has another name, such as <code>server-data</code>.</dd>
+      <dt>Windows</dt>
+      <dd>Paste <code>%USERPROFILE%\Zomboid\Saves</code> into the folder picker's address bar, then open the game mode and the save.</dd>
+      <dt>Linux</dt>
+      <dd><code>~/Zomboid/Saves</code>, same folders as Windows.</dd>
+    </dl>
+  </section>
+
+</div>
+
+  <section class="host-panel">
+    <aside class="host-card" aria-labelledby="hosting-h">
+      <img class="host-card-art" src="img/pz-hosting.jpg" alt="" loading="lazy" width="640" height="360">
+      <div class="host-card-body">
+        <div class="host-card-head">
+          <img class="host-card-icon" src="brand/broccoli-mark.png" alt="" loading="lazy" width="24" height="24">
+          <h2 class="host-card-title" id="hosting-h">run your own pz server</h2>
+        </div>
+        <p class="host-card-text">If you don't already have a server for this map, Indifferent Broccoli rents Project Zomboid servers. No port forwarding, and the save files are a click away in the file manager.</p>
+        <a class="small-button-primary" href="https://indifferentbroccoli.com/project-zomboid-server-hosting" target="_blank" rel="noopener noreferrer">launch 2-day free trial server <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </aside>
+  </section>
+
+</div>
+</main>
+
+<dialog id="confirm" class="confirm" aria-labelledby="confirm-h">
+  <h2 class="h2" id="confirm-h">Delete these files?</h2>
+  <p id="confirm-text"></p>
+  <p id="confirm-note"></p>
+  <div class="confirm-actions">
+    <button type="button" id="confirm-cancel" class="btn btn-ghost">Cancel</button>
+    <button type="button" id="confirm-ok" class="button-primary button-danger">Delete</button>
+  </div>
+</dialog>
+
+<footer class="app-bar">
+  <div class="footer-links">
+    <div class="footer-links-row">
+      <span>see our other game tools</span>
+      <a class="small-button-primary" href="https://gametools.indifferentketchup.com" target="_blank" rel="noopener noreferrer">
+        gametools
+      </a>
+    </div>
+  </div>
+  <div class="site-footer">
+    <a class="org-footer-credit" href="https://www.indifferentbroccoli.com" target="_blank" rel="noopener noreferrer">
+      <img src="brand/broccoli-mark.png" alt="" width="18" height="18">
+      indifferent broccoli <span class="credit-face" aria-hidden="true">(:|)</span>
+    </a>
+  </div>
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,274 @@
+/* ─────────────────────────────────────────────────────────────
+   Indifferent Ketchup: shared design tokens
+   Single source of truth for every site's color, type, spacing,
+   radius, shadow, and motion values.
+
+   Origin: merged from sortof/DESIGN.md (locked palette + rules),
+   mulch/globals.css (severity scale), and analytics/app.css
+   (spacing + shadow scale, chart colors). Do not fork this file
+   per site, edit here, then copy/redistribute (see ../README.md).
+
+   Brand rule (load-bearing, do not "fix" by making it symmetric):
+     --brand-*  = Indifferent Ketchup, the product studio. Red.
+                  Used for primary CTAs and product identity in
+                  every site's UI.
+     --org-mark = Indifferent Broccoli, the parent org. Green.
+                  Reserved for the footer credit link ONLY: ketchup
+                  icon at the top of a page, broccoli icon at the
+                  bottom, never both in the same spot. Never used as
+                  a general button/accent color, and never placed in
+                  a header/nav. If you're reaching for --org-mark
+                  outside a footer credit (or the .org-badge-fixed
+                  fallback for footerless apps), use --success or
+                  --brand instead.
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  /* ══ canvas (cool, blue-cast dark: the one canonical background) ══ */
+  --bg: #0A141E;
+  --bg-deep: #050E17;       /* nav rails, sidebars, one step darker than canvas */
+  --bg-surface: #14293C;    /* panels, cards, inputs */
+  --bg-elevated: #1B3550;   /* hover/active/focused surfaces */
+  --bg-inset: #0E1C2B;      /* recessed wells (code block bodies, table stripes) */
+  --border: #2A4A6B;
+  --border-strong: #3A5C80;
+
+  /* ══ text ══ */
+  --text: #FFFFFF;
+  --text-muted: #A3B8CC;   /* 4.7:1 on --bg, passes WCAG AA */
+  --text-faint: #8A9CAE;
+
+  /* ══ brand (Indifferent Ketchup: Signal Red, rare, action-only) ══
+     Rarity rule: red covers at most ~10% of any viewport, one
+     primary action per screen. It never fills a large surface. */
+  --brand: #FF3838;
+  --brand-hover: #E62E2E;
+  --brand-ink: #0A141E;      /* text color ON a red fill */
+  --brand-bg: rgb(255 56 56 / 0.14);
+  --brand-border: rgb(255 56 56 / 0.40);
+
+  /* ══ org mark (Indifferent Broccoli: restricted use, see header note) ══ */
+  --org-mark: #5EFF0D;
+  --org-mark-hover: #4ACC00;
+  --org-mark-ink: #0A141E;
+
+  /* ══ secondary action (azure, never a fill, borders/links only) ══ */
+  --secondary: #0050FF;
+  --secondary-hover: #2E6BFF;
+  --secondary-ink: #FFFFFF;
+
+  /* ══ semantic ══ */
+  --info: #56B4E9;
+  --info-bg: rgb(86 180 233 / 0.14);
+  --info-border: rgb(86 180 233 / 0.40);
+
+  --success: var(--org-mark);
+  --success-bg: rgb(94 255 13 / 0.12);
+  --success-border: rgb(94 255 13 / 0.35);
+
+  --warning: #E69F00;
+  --warning-bg: rgb(230 159 0 / 0.14);
+  --warning-border: rgb(230 159 0 / 0.40);
+
+  --danger: #E97515;         /* shifted from #D55E00 to clear WCAG AA on --bg-surface */
+  --danger-bg: rgb(233 117 21 / 0.16);
+  --danger-border: rgb(233 117 21 / 0.40);
+
+  --purple: #8A2BE2;         /* tertiary accent, used sparingly for a 4th chart series or tag */
+
+  /* ══ severity scale (log/incident-domain products: mulch, palworld tool,
+     boss-search staff tooling, broccoli-dashboard status). Colorblind-safe
+     (Okabe-Ito derived), warm ramp from critical → noise. ══ */
+  --sev-critical: color-mix(in srgb, var(--danger) 70%, var(--text) 30%);
+  --sev-critical-bg: var(--danger-bg);
+  --sev-high: #FF8C42;
+  --sev-high-bg: color-mix(in srgb, #FF8C42 12%, transparent);
+  --sev-medium: #FBBF24;
+  --sev-medium-bg: color-mix(in srgb, #FBBF24 12%, transparent);
+  --sev-low: var(--text-muted);
+  --sev-low-bg: var(--bg);
+  --sev-noise: color-mix(in srgb, var(--text) 52%, var(--bg) 48%);
+  --sev-noise-bg: var(--bg);
+
+  /* ══ chart / categorical (dashboards: analytics, broccoli-dashboard, boss-search).
+     Reuses the semantic hues above so a legend color always means the same
+     thing it means elsewhere in the UI, do not introduce a chart-only hue. ══ */
+  --chart-1: var(--org-mark);   /* primary series */
+  --chart-2: var(--info);
+  --chart-3: var(--warning);
+  --chart-4: var(--purple);
+  --chart-5: var(--danger);
+  --chart-6: var(--secondary);
+
+  /* ══ radius (≤ 12px everywhere; 24px+ is the AI rounding tell) ══ */
+  --radius-pill: 999px;
+  --radius-panel: 12px;
+  --radius-md: 8px;
+  --radius-sm: 6px;
+  --radius-xs: 4px;
+
+  /* ══ notch (clip-path corner treatment for filled buttons) ══
+     Origin: indifferentketchup.com site.css ~lines 42-48.
+     12px cut matches the --radius-panel cap. The polygon clips
+     top-right and bottom-left; top-left and bottom-right stay square. */
+  --cut: 12px;
+  --notch: polygon(
+    0 0,
+    calc(100% - var(--cut)) 0,
+    100% var(--cut),
+    100% 100%,
+    var(--cut) 100%,
+    0 calc(100% - var(--cut))
+  );
+
+  /* ══ shadow (soft + ambient: panels are shadow-defined, not bordered) ══ */
+  --shadow-panel: 0 2px 12px rgba(0, 0, 0, 0.28), 0 1px 2px rgba(0, 0, 0, 0.15);
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.35);
+  --shadow-deep: 0 14px 36px rgba(1, 4, 9, 0.60);
+  --shadow-glow-success: 0 0 20px rgb(94 255 13 / 0.08);
+
+  /* ══ spacing (4px base scale) ══ */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --page-padding: clamp(20px, 4vw, 40px);
+  --section-y: clamp(28px, 4vw, 40px);
+
+  /* ══ page chrome ══
+     One header height and one footer padding across every site, so the
+     bar you land on is the same bar everywhere. Before these existed the
+     six sites shipped six header heights (48px to 74px) and four footer
+     paddings, which reads as six unrelated products rather than one
+     studio. 64px fits the 28px header mark with 18px of breathing room
+     either side, and is what indifferentketchup.com already used.
+     64px total INCLUDING the 1px bottom border under border-box. */
+  --header-h: 64px;
+  --footer-pad-y: var(--sp-6);
+
+  /* ══ motion ══ */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --t-fast: 150ms;
+  --t-base: 220ms;
+  --t-slow: 400ms;
+
+  /* ══ type ══
+     Sites without next/font (everything except mulch's Next.js app) load
+     these via the Google Fonts <link> in fonts.css. Sites using next/font
+     bind --font-sora / --font-jetbrains on <html> instead, see fonts.css. */
+  --font-display: 'Sora', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Open Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --scrollbar-height: 8px;
+
+  /* ══ flair ══
+     Opt-in identity layer, scoped to [data-flair]. Sites that do not
+     set the attribute render byte-identically to today. These tokens
+     are inert on their own (nothing in :root references them); they
+     activate only through flair.css's attribute-scoped rules. */
+
+  /* cream tone, sourced from brand/ketchup-mark.svg (#F2E6CC).
+     Measures 14.99:1 on --bg, 12.01:1 on --bg-surface.
+     Used on small elements (the maker note) and on exactly one bounded
+     block per page (.slab-cream, loud tier). Never a page background and
+     never a panel background: at that scale it stops interrupting the
+     cold canvas and starts replacing it. */
+  --flair-cream: #F2E6CC;
+
+  /* hard-offset shadow with zero blur -- anti-glassmorphism, sticker read.
+     Distinct from --shadow-panel and --shadow-card, which use soft ambient
+     blur. The zero-blur offset reads as a physical sticker or a pressed
+     badge, not a floating panel. */
+  --flair-shadow: 4px 4px 0 0 rgb(0 0 0 / 0.45);
+
+  /* No rotation tokens. The flair layer places nothing off-grid: every
+     element in both tiers sits square to the page. Rotation was tried at
+     1deg (invisible) and at 2.5 to 3deg (read as damage, not emphasis) and
+     removed at both. The tier's force comes from scale, full-bleed color,
+     and warm-against-cold contrast, all of which work on straight lines. */
+
+  /* dither texture alpha. Cream on the --bg canvas has little luminance
+     to spend, so the original 0.10 rendered as a nearly invisible dark
+     strip. 0.25 is the point where the checkerboard reads as texture
+     without becoming a light band in its own right. */
+  --flair-dither-alpha: 0.25;
+}
+
+/* Baseline reset + scrollbar/selection/focus treatment shared by every
+   site. Safe to include even where a site already has its own reset,
+   these rules are idempotent. */
+@layer ketchup-base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    height: 100%;
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    margin: 0;
+    min-height: 100%;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: rgb(86 180 233 / 0.35);
+    color: var(--text);
+  }
+
+  :focus {
+    outline: none;
+  }
+  :focus-visible {
+    outline: 2px solid var(--info);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: var(--scrollbar-height);
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: var(--border);
+    border-radius: var(--radius-xs);
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--text-muted);
+  }
+  * {
+    scrollbar-color: var(--border) transparent;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

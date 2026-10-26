@@ -1,0 +1,38 @@
+/* ─────────────────────────────────────────────────────────────
+   Indifferent Ketchup: font loading
+
+   Every site uses the same three families: Sora (display), Open
+   Sans (body/prose), JetBrains Mono (data/labels/code). How you
+   load them depends on the site's stack:
+
+   1. Plain HTML / EJS / no-build JSX (sortof, mulch's legacy
+      iblogs, indifferent-broccoli, ib-palworld-conversion-tool,
+      boss-search's search-ui): put this in <head>, BEFORE
+      tokens.css/components.css so the fonts are requested early:
+
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+   2. Next.js (mulch/iblogs-core web/): use next/font instead of
+      the <link> tags above (self-hosted, no request-blocking
+      waterfall). In the root layout:
+
+      import { Sora, JetBrains_Mono, Open_Sans } from 'next/font/google'
+      const sora = Sora({ subsets: ['latin'], variable: '--font-sora', weight: ['400','500','600','700'] })
+      const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains', weight: ['400','500','600'] })
+      const openSans = Open_Sans({ subsets: ['latin'], variable: '--font-open-sans', weight: ['400','600','700'] })
+      // apply all three .variable classNames to <html>, then:
+
+      This file's fallback block below binds tokens.css's
+      --font-display/--font-sans/--font-mono to those next/font
+      CSS variables when present, and to the Google Fonts family
+      names otherwise, so tokens.css never needs to know which
+      loading strategy a given site uses.
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  --font-display: var(--font-sora, 'Sora'), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: var(--font-open-sans, 'Open Sans'), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: var(--font-jetbrains, 'JetBrains Mono'), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}

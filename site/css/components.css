@@ -1,0 +1,911 @@
+/* ─────────────────────────────────────────────────────────────
+   Indifferent Ketchup — shared components
+
+   Plain CSS, zero framework dependency. Every rule here reads
+   only from tokens.css custom properties — never a literal hex/
+   rgb/oklch. That's not a style preference, it's what makes this
+   file safe to drop into a no-build site (sortof, mulch's legacy
+   iblogs, ib-palworld-conversion-tool) via a single <link>, same
+   as a Tailwind-based site (indifferent-broccoli, mulch/web) gets
+   the same values through tailwind/preset.cjs or tailwind/theme.css
+   instead. Load order: tokens.css, then fonts.css, then this file.
+
+   Full rationale + do's/don'ts for each pattern: ../DESIGN.md
+   ───────────────────────────────────────────────────────────── */
+
+/* ══════════════════════ buttons ══════════════════════
+   Shape is uniform across every variant: 12px radius, height 44px
+   (36px for the `small` modifier), Sora 600/700, active press
+   scales to 0.97. Only ONE .btn-primary per screen — that's the
+   Rarity Rule: red covers ~10% of a viewport, not more. */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  height: 44px;
+  padding: 0 var(--sp-4);
+  border-radius: var(--radius-panel);
+  border: 1px solid transparent;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  /* The download/continue control on several sites has to be an <a> (it needs
+     href + download), and a bare anchor arrives underlined. */
+  text-decoration: none;
+  transition: background-color var(--t-fast) var(--ease-out),
+              border-color var(--t-fast) var(--ease-out),
+              color var(--t-fast) var(--ease-out),
+              box-shadow var(--t-fast) var(--ease-out),
+              transform 100ms var(--ease-out);
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  box-shadow: none;
+}
+.btn.small {
+  height: 32px;
+  padding: 0 var(--sp-3);
+  font-size: 13px;
+}
+
+.btn-primary {
+  background: var(--brand);
+  color: var(--brand-ink);
+  font-weight: 700;
+  clip-path: var(--notch);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--brand-hover);
+  box-shadow: var(--shadow-card);
+}
+.btn-primary:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 3px var(--text);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border);
+}
+.btn-secondary:hover:not(:disabled) {
+  background: var(--bg-elevated);
+  border-color: var(--text-muted);
+}
+
+.btn-info {
+  background: transparent;
+  color: var(--info);
+  border-color: var(--info-border);
+}
+.btn-info:hover:not(:disabled) {
+  background: var(--info);
+  color: var(--brand-ink);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border-color: transparent;
+}
+.btn-ghost:hover:not(:disabled) {
+  background: var(--bg-elevated);
+  color: var(--text);
+}
+
+/* Report/destructive-by-intent CTA — outlined red at rest, fills
+   solid on hover. Visually distinct from .btn-primary so a red
+   OUTLINE never gets mistaken for the page's one primary action. */
+.btn-outline-danger {
+  background: transparent;
+  color: var(--brand);
+  border-color: var(--brand);
+}
+.btn-outline-danger:hover:not(:disabled) {
+  background: var(--brand);
+  color: var(--brand-ink);
+}
+
+/* ══════════════════════ panels & cards ══════════════════════
+   Tool-archetype products (sortof, mulch, ib-palworld-conversion-
+   tool) use .panel: shadow-defined, no border, no stacking.
+   Dashboard-archetype products (analytics, indifferent-broccoli,
+   boss-search) additionally use .card: a border-hover affordance
+   fits a grid of many equal-weight items better than a shadow
+   does. Pick one archetype per product — don't mix both patterns
+   on the same screen. */
+
+.panel {
+  background: var(--bg-surface);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-panel);
+}
+.panel > .panel-header {
+  padding: 10px var(--sp-4);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.panel > .panel-body {
+  padding: var(--sp-4);
+}
+
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--sp-4);
+  transition: border-color var(--t-base) var(--ease-out);
+}
+.card:hover {
+  border-color: var(--border-strong);
+}
+.card-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--sp-3);
+}
+.card-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+}
+.card-meta {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-faint);
+}
+
+/* ══════════════════════ inputs ══════════════════════ */
+
+.field {
+  display: block;
+  width: 100%;
+  background: var(--bg-surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  padding: 14px 16px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  transition: border-color var(--t-fast) var(--ease-out),
+              background-color var(--t-fast) var(--ease-out);
+}
+.field::placeholder {
+  color: var(--text-muted);
+  font-style: normal;
+}
+.field:focus {
+  outline: none;
+  border-color: var(--info);
+  background: var(--bg-elevated);
+  box-shadow: 0 0 0 2px var(--info-bg);
+}
+.field:disabled {
+  cursor: not-allowed;
+  color: var(--text-muted);
+}
+.field.small {
+  padding: var(--sp-2) var(--sp-3);
+  font-size: 12px;
+  border-radius: var(--radius-md);
+}
+
+/* ══════════════════════ form controls ══════════════════════
+   Select, range, and checkbox controls. Layer on top of .field
+   for base styling. All values use shared tokens only, no hex
+   or rgb literals. Origin: 7d2dmapgenerator web/src/styles/app.css
+   ~lines 395-507, moved upstream. */
+
+.ctl-select {
+  appearance: none;
+  background-image: linear-gradient(
+    45deg,
+    transparent 40%,
+    var(--text-faint) 40%,
+    var(--text-faint) 48%,
+    transparent 48%,
+    transparent 52%,
+    var(--text-faint) 52%,
+    var(--text-faint) 60%,
+    transparent 60%
+  );
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 12px 12px;
+  padding-right: 36px;
+}
+
+.ctl-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  outline: none;
+  cursor: pointer;
+}
+
+.ctl-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--text-muted);
+  border: 2px solid var(--bg);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color var(--t-fast) var(--ease-out);
+}
+.ctl-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: var(--text-muted);
+  border: 2px solid var(--bg);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color var(--t-fast) var(--ease-out);
+}
+
+.ctl-range:hover::-webkit-slider-thumb,
+.ctl-range:focus-visible::-webkit-slider-thumb {
+  background: var(--info);
+}
+.ctl-range:hover::-moz-range-thumb,
+.ctl-range:focus-visible::-moz-range-thumb {
+  background: var(--info);
+}
+
+.ctl--check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.ctl-check {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: background-color var(--t-fast) var(--ease-out),
+              border-color var(--t-fast) var(--ease-out);
+}
+.ctl-check:hover {
+  border-color: var(--border-strong);
+}
+.ctl-check:focus-visible {
+  outline: 2px solid var(--info);
+  outline-offset: 2px;
+}
+.ctl-check:checked {
+  background: var(--info);
+  border-color: var(--info);
+}
+/* CSS-drawn checkmark via rotated border */
+.ctl-check:checked::after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 3px;
+  width: 6px;
+  height: 11px;
+  border: solid var(--bg);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.ctl__check-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+/* ══════════════════════ badges & status pills ══════════════════════
+   Color is reinforcement, never the sole carrier — every badge pairs
+   a hue with a text label (and usually a glyph). */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: transparent;
+}
+.badge-brand   { color: var(--brand);   border-color: var(--brand-border);   background: var(--brand-bg); }
+.badge-info    { color: var(--info);    border-color: var(--info-border);    background: var(--info-bg); }
+.badge-success { color: var(--success); border-color: var(--success-border); background: var(--success-bg); }
+.badge-warning { color: var(--warning); border-color: var(--warning-border); background: var(--warning-bg); }
+.badge-danger  { color: var(--danger);  border-color: var(--danger-border);  background: var(--danger-bg); }
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+}
+.status-pill::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.status-pill.pulse::before {
+  animation: ketchup-pulse 1.2s ease-in-out infinite;
+}
+@keyframes ketchup-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* severity variant (log/incident-domain products) */
+.sev-critical { color: var(--sev-critical); }
+.sev-high     { color: var(--sev-high); }
+.sev-medium   { color: var(--sev-medium); }
+.sev-low      { color: var(--sev-low); }
+.sev-noise    { color: var(--sev-noise); }
+
+/* ══════════════════════ code blocks ══════════════════════ */
+
+.code-block {
+  background: var(--bg-surface);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-panel);
+  overflow: hidden;
+}
+.code-block .cb-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.code-block pre {
+  margin: 0;
+  padding: 16px 20px;
+  background: var(--bg-inset);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-x: auto;
+  /* Long single-line output (command results, IDs) can exceed the panel
+     width on narrow viewports. Without this, the overflow is clipped with
+     no visual sign there's more to scroll to -- the fade is the affordance;
+     it's a no-op when the line already fits. */
+  mask-image: linear-gradient(to right, black calc(100% - 24px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black calc(100% - 24px), transparent 100%);
+}
+.code-block .ink-key { color: var(--info); }
+.code-block .ink-sep,
+.code-block .ink-mut { color: var(--text-muted); }
+
+/* ══════════════════════ tables ══════════════════════ */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--bg-surface);
+  text-align: left;
+  padding: 10px 14px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+.table tbody td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.table tbody tr:hover td {
+  background: var(--bg-elevated);
+}
+.table .th-sort {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ══════════════════════ KPI tile (dashboard archetype) ══════════════════════ */
+
+.kpi {
+  padding: var(--sp-4);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.kpi-label {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.kpi-value {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-top: 4px;
+}
+.kpi-sub {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-faint);
+  margin-top: 2px;
+}
+.kpi.accent .kpi-value { color: var(--brand); }
+.kpi.sage   .kpi-value { color: var(--success); }
+.kpi.amber  .kpi-value { color: var(--warning); }
+.kpi.red    .kpi-value { color: var(--danger); }
+
+/* ══════════════════════ nav / appbar / sidebar (dashboard archetype) ══════════════════════ */
+
+.appbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-h);
+  padding: 0 var(--sp-4);
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+
+/* ══════════════════════ page chrome ══════════════════════
+   The header bar and footer every site shares. Both archetypes use
+   these: a tool-archetype product still gets the same 64px bar and the
+   same footer padding as a dashboard, because a visitor moving between
+   two studio sites should not feel the chrome resize under them.
+
+   .site-header is the non-sticky, non-blurred variant of .appbar for
+   sites that don't want the bar following the scroll. Same height, same
+   border, so the two are interchangeable without a visual jump. */
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  height: var(--header-h);
+  border-bottom: 1px solid var(--border);
+}
+
+.site-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3) var(--sp-5);
+  flex-wrap: wrap;
+  padding-block: var(--footer-pad-y);
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+/* Utility links block (game-tools line, GitHub credit line), rendered
+   above .site-footer's credit line. A sibling class, not a modifier on
+   .site-footer, so the credit line's page-chrome border/padding
+   contract stays untouched. Never put an API link in here. Two lines,
+   centered, not a single flex row -- the game-tools pill and the
+   GitHub credit read as distinct utility lines, not one cluster. */
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-faint);
+}
+.footer-links-row,
+.footer-links-credit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+.footer-links-credit { gap: 6px; margin: 0; }
+/* .footer-links-row holds a .btn-primary.small pill (reused as-is, no
+   footer-specific button variant) -- a second, documented Rarity Rule
+   exception (DESIGN.md s2) alongside the flair band: footer chrome,
+   .small, low visual weight relative to a page's real in-content CTA. */
+
+.footer-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-faint);
+  text-decoration: none;
+}
+.footer-link:hover,
+.footer-link:focus-visible {
+  color: var(--text);
+  text-decoration: underline;
+}
+.footer-link-icon { display: block; opacity: 0.9; }
+
+.footer-links-credit a {
+  color: var(--info);
+  text-decoration: underline;
+}
+.footer-links-credit a:hover,
+.footer-links-credit a:focus-visible { color: var(--text); }
+
+.sidebar {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--bg-deep);
+  border-right: 1px solid var(--border);
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-muted);
+  border-left: 2px solid transparent;
+  transition: color var(--t-fast) var(--ease-out),
+              background-color var(--t-fast) var(--ease-out),
+              border-color var(--t-fast) var(--ease-out);
+}
+.nav-item:hover {
+  color: var(--text);
+  background: var(--bg-elevated);
+}
+.nav-item.active {
+  color: var(--success);
+  background: var(--success-bg);
+  border-left-color: var(--success);
+}
+
+/* ══════════════════════ brand marks ══════════════════════
+   Ketchup icon at the top, Broccoli icon at the bottom — never mixed.
+   Header stays product-only: the ketchup bottle mark next to the
+   product's own name (.header-mark). The Broccoli mark is RESTRICTED
+   to the footer credit line (.org-footer-credit) — it never appears
+   in a header, nav bar, or anywhere a general UI accent would go.
+   Every other green in the UI is .badge-success / .kpi.sage /
+   .status-pill, which route through --success, not --org-mark, on
+   purpose — so grepping for --org-mark tells you exactly where the
+   footer credit lives, nothing else. If a page has no shared footer
+   (e.g. a router with independent full-height routes), use
+   .org-badge-fixed instead of skipping the credit or inventing a
+   header placement for it. */
+
+.header-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text);
+  text-decoration: none;
+}
+/* The bottle art is portrait (33:64), not square. 16x32 keeps its native
+   ratio and lands inside BRAND.md's 20-32px range. Don't set only one
+   dimension, and don't reuse the square favicon raster here. */
+.header-mark img { display: block; }
+
+/* Two footer credits, same shape, different color and different job:
+   .brand-footer-credit is the product studio (ketchup, red),
+   .org-footer-credit is the parent org (broccoli, green). Both live in
+   the footer. Using the org class for the ketchup line paints the studio
+   credit Broccoli green, which reads as the wrong company. */
+.brand-footer-credit,
+.org-footer-credit {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-decoration: none;
+}
+.brand-footer-credit img,
+.org-footer-credit img { display: block; opacity: 0.9; }
+
+.brand-footer-credit { color: var(--brand); }
+.brand-footer-credit:hover { color: var(--brand-hover); text-decoration: underline; }
+
+.org-footer-credit { color: var(--org-mark); }
+.org-footer-credit:hover { color: var(--org-mark-hover); text-decoration: underline; }
+
+/* Sits between .org-footer-credit and .brand-footer-credit in the
+   credit line. Same shape, but --text-faint: unlike the org/brand
+   credits, it makes no org or brand ownership claim. */
+.policy-footer-credit {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-decoration: none;
+  color: var(--text-faint);
+}
+.policy-footer-credit:hover { color: var(--text); text-decoration: underline; }
+
+/* Small ASCII face riding along in a footer credit, e.g. "(:|)" after
+   "indifferent broccoli". Decorative, hence aria-hidden on the element
+   that carries it. */
+.credit-face {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  margin-left: 2px;
+}
+
+/* Fixed corner badge — the footer credit for apps with no shared
+   footer element (independent full-height routes, dense toolbars).
+   Overlays the page instead of participating in its layout, so it's
+   safe to add without touching every page's own structure. */
+.org-badge-fixed {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  opacity: 0.7;
+  transition: opacity var(--t-fast) var(--ease-out);
+}
+.org-badge-fixed:hover,
+.org-badge-fixed:focus-visible { opacity: 1; }
+.org-badge-fixed img { display: block; }
+
+/* ══════════════════════ hosting card & guide list ══════════════════════
+   The "run your own server" promo and the "server guides" list that
+   sit below a tool's main content. Every link in them goes to our
+   own sites (indifferentbroccoli.com, its wiki, indifferentketchup.com),
+   never an outside one. The art is optional, self-hosted and 16:9.
+   The call to action is a .btn-secondary, so the page keeps its one
+   .btn-primary. Use the <aside> element for the card; flair.css
+   already owns a class named .aside.
+
+   Wrap the tool's content and the .host-panel in .host-rail-layout,
+   content first. From 1400px up the panel docks to the right of the
+   content as a 320px rail and the page widens by --host-rail-w to pay
+   for it, so the content keeps its width. A site with its own
+   max-width on the header or body adds var(--host-rail-w, 0px) to it,
+   as .container does, so the left edges stay lined up. Below 1400px
+   the panel stacks under the content. */
+
+.host-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-4);
+  align-items: start;
+}
+@media (min-width: 900px) {
+  .host-panel.has-guides { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+}
+.host-card {
+  display: flex;
+  align-items: center;
+  background: var(--bg-surface);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-panel);
+  overflow: hidden;
+}
+.host-card-art {
+  display: block;
+  flex: 0 0 38%;
+  min-width: 0;
+  /* The width/height attributes would otherwise pin the height at 360px. */
+  height: auto;
+  align-self: stretch;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+.host-card-body {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: var(--sp-4);
+}
+.host-card-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-2);
+}
+.host-card-icon {
+  display: block;
+  flex: none;
+  width: 24px;
+  height: 24px;
+}
+.host-card-title,
+.guide-list-title {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  color: var(--text);
+}
+.host-card-text {
+  margin: 0 0 var(--sp-3);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+@media (max-width: 560px) {
+  .host-card { flex-direction: column; align-items: stretch; }
+  .host-card-art { flex: none; width: 100%; }
+}
+
+.host-rail-layout > .host-panel { margin-top: var(--sp-4); }
+@media (min-width: 1400px) {
+  :root:has(.host-rail-layout) { --host-rail-w: 344px; }
+  .host-rail-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+  }
+  .host-rail-layout > :first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .host-rail-layout > .host-panel {
+    flex: 0 0 320px;
+    margin-top: 0;
+    grid-template-columns: minmax(0, 1fr);
+    border-left: 1px solid var(--border);
+    padding-left: 20px;
+  }
+  .host-rail-layout > .host-panel .host-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .host-rail-layout > .host-panel .host-card-art {
+    flex: none;
+    width: 100%;
+  }
+}
+
+.guide-list {
+  background: var(--bg-surface);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-panel);
+  padding: var(--sp-4);
+}
+.guide-list-title { margin-bottom: var(--sp-3); }
+.guide-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+.guide-list a {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--info);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+.guide-list a:hover { border-bottom-color: var(--info); }
+.guide-list a:focus-visible {
+  outline: 2px solid var(--info);
+  outline-offset: 2px;
+}
+.guide-list-blurb {
+  display: block;
+  margin-top: 2px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+/* ══════════════════════ layout primitives ══════════════════════ */
+
+.container {
+  max-width: calc(1200px + var(--host-rail-w, 0px));
+  margin: 0 auto;
+  padding: 0 var(--page-padding);
+}
+.stack > * + * {
+  margin-top: var(--sp-4);
+}
+.cluster {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+
+/* ══════════════════════ typography helpers ══════════════════════ */
+
+.h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 4vw, 40px); line-height: 1.05; letter-spacing: -0.02em; }
+.h2 { font-family: var(--font-display); font-weight: 600; font-size: 22px; line-height: 1.1; letter-spacing: -0.01em; }
+.h3 { font-family: var(--font-display); font-weight: 600; font-size: 16px; line-height: 1.2; }
+.prose { font-family: var(--font-sans); font-size: 16px; line-height: 1.6; max-width: 70ch; color: var(--text-muted); }
+.mono-label { font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.02em; color: var(--text-muted); }
+
+/* .brand-footer-credit is display:inline-flex, so as a plain inline
+   child of .mono-label it aligns to its own baseline, not the
+   surrounding "a thing by" text -- with more items sharing the credit
+   row now, that mismatch reads as one item sitting off the shared
+   center line. Scoped to .site-footer so every other .mono-label use
+   (dashboards, section labels) is untouched. */
+.site-footer .mono-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* fade-up entrance — the ONE motion pattern for content appearing
+   after an async action (search results, sort output, log parse). */
+@keyframes ketchup-fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up {
+  animation: ketchup-fade-up var(--t-base) var(--ease-out) both;
+}
